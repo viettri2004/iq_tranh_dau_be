@@ -3,35 +3,35 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeor
 @Entity('users')
 export class UserEntity {
     @PrimaryGeneratedColumn()
-    id: number;
+    id!: number;
 
     @Column({ unique: true })
-    googleId: string;
+    googleId!: string;
 
     @Column()
-    name: string;
+    name!: string;
 
     @Column({ unique: true })
-    email: string;
+    email!: string;
 
     @Column({ nullable: true })
-    avatarUrl: string;
+    avatarUrl!: string;
 
-    @Column({ default: 1200 })
-    elo: number;
-
-    @Column({ default: 0 })
-    exp: number;
+    @Column({ default: 100 })
+    elo!: number;
 
     @Column({ default: 0 })
-    totalMatches: number;
+    exp!: number;
 
     @Column({ default: 0 })
-    wins: number;
+    totalMatches!: number;
 
     @Column({ default: 0 })
-    losses: number;
+    wins!: number;
+
+    @Column({ default: 0 })
+    losses!: number;
 
     @CreateDateColumn()
-    createdAt: Date;
+    createdAt!: Date;
 }

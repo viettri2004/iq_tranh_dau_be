@@ -19,7 +19,7 @@ async function bootstrap() {
     forbidNonWhitelisted: true,   // báo lỗi nếu có field không định nghĩa
     // transform: true,              // tự ép kiểu
   }));
-  await app.listen(3000);
-  console.log(`Swagger UI: http://localhost:3000/api-docs`);
+  app.listen(3000, '0.0.0.0')
+  console.log(`Swagger UI`);
 }
 bootstrap();

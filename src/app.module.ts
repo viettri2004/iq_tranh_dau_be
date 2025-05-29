@@ -10,6 +10,8 @@ import { UserEntity } from './users/user.entity';
 import { UsersModule } from 'src/users/users.module'; // nếu có
 import { ConfigModule } from '@nestjs/config';
 
+import { RoomModule } from './room/room.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -31,6 +33,7 @@ import { ConfigModule } from '@nestjs/config';
     }),
     AuthModule,
     UsersModule,
+    RoomModule
   ],
   controllers: [AppController],
   providers: [AppService],
