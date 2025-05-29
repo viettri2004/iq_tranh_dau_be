@@ -4,6 +4,8 @@ import { JwtService } from '@nestjs/jwt';
 import { OAuth2Client } from 'google-auth-library';
 import { UsersService } from '../users/users.service';
 import { UserEntity } from '../users/user.entity';
+import { toPlayerResponse } from 'src/common/helpers/player-response.helper';
+import { Player } from 'src/common/types/player.interface';
 
 @Injectable()
 export class AuthService {
@@ -14,7 +16,7 @@ export class AuthService {
         private readonly usersService: UsersService,
     ) { }
 
-    async loginWithGoogle(idToken: string): Promise<{ access_token: string; user: UserEntity }> {
+    async loginWithGoogle(idToken: string): Promise<{ access_token: string; user: Player }> {
         // 1. Xác thực token với Google
         const ticket = await this.googleClient.verifyIdToken({
             idToken,
@@ -35,7 +37,7 @@ export class AuthService {
 
         return {
             access_token: token,
-            user,
+            user: toPlayerResponse(user),
         };
     }
 }

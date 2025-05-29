@@ -22,8 +22,11 @@ export class UsersService {
             });
             await this.userRepo.save(user);
         }
+
         return user;
     }
+
+
 
     // ✅ THÊM HÀM NÀY
     async findById(id: number): Promise<UserEntity> {
