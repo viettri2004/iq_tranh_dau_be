@@ -58,3 +58,5 @@ Dockerfile.*
 # Misc
 .idea/
 *.swp
+
+/generated/prisma
