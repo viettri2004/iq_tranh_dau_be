@@ -1,19 +1,32 @@
 // src/app.module.ts
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { AppController } from 'src/app.controller';
+import { AppService } from 'src/app.service';
 import { AuthModule } from 'src/auth/auth.module'; // nếu có
 
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserEntity } from './users/user.entity';
-import { UsersModule } from 'src/users/users.module'; // nếu có
+import { User } from 'src/users/user.entity';
+import { UserModule } from 'src/users/user.module'; // nếu có
 import { ConfigModule } from '@nestjs/config';
-
-import { RoomModule } from './room/room.module';
+import { Device } from 'src/devices/device.entity';
+import { GameEvent } from 'src/game_events/game-event.entity';
+import { Session } from 'src/sessions/session.entity';
+import { Room } from 'src/rooms/room.entity';
+import { Report } from 'src/reports/report.entity';
+import { Question } from 'src/questions/question.entity';
+import { Match } from 'src/matches/match.entity';
+import { Leaderboard } from 'src/leaderboard/leaderboard.entity';
+import { Achievement } from 'src/achievements/achievement.entity';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { MatchModule } from 'src/matches/match.module';
+import { MatchAnswer } from './match-answers/match-answer.entity';
+import { MatchAnswerModule } from './match-answers/match-answer.module';
+import { SessionModule } from './sessions/session.module';
 
 @Module({
   imports: [
+    EventEmitterModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true, // không cần import lại ở các module khác
     }),
@@ -24,7 +37,19 @@ import { RoomModule } from './room/room.module';
       username: 'root',
       password: '',
       database: 'quiz_game',
-      entities: [UserEntity],
+      entities: [
+        User,
+        Device,
+        GameEvent,
+        Session,
+        Room,
+        Report,
+        Question,
+        Match,
+        Leaderboard,
+        Achievement,
+        MatchAnswer,
+      ],
       synchronize: true, // 🔥 Tự tạo bảng theo entity (khuyên dùng dev, tắt khi production)
     }),
     JwtModule.register({
@@ -32,10 +57,12 @@ import { RoomModule } from './room/room.module';
       signOptions: { expiresIn: '7d' },
     }),
     AuthModule,
-    UsersModule,
-    RoomModule
+    UserModule,
+    MatchModule,
+    MatchAnswerModule,
+    SessionModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}

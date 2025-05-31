@@ -1,23 +1,53 @@
-import { Player } from 'src/common/types/player.interface';
+import { Type } from 'class-transformer';
+import { IsInt, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
+
+import { Socket } from 'socket.io';
+import { Session } from 'src/sessions/session.entity';
+
+export class SocketUserDto {
+  @IsInt()
+  id!: number;
+
+  @IsString()
+  @IsNotEmpty()
+  name!: string;
+}
 
 export class CreateRoomDto {
-    id!: string;
-    host!: Player;
+  @IsString()
+  @IsNotEmpty()
+  id!: string;
+
+  @ValidateNested()
+  @Type(() => SocketUserDto)
+  host!: SocketUserDto;
 }
 
 export class JoinRoomDto {
-    id!: string;
-    user!: Player;
+  @IsNotEmpty()
+  id!: string;
+
+  @ValidateNested()
+  @Type(() => SocketUserDto)
+  user!: SocketUserDto;
 }
 
 export class LeaveRoomDto {
-    id!: string;
-    userId!: number;
+  @IsNotEmpty()
+  id!: string;
+
+  @IsInt()
+  userId!: number;
 }
 
 export interface Room {
-    id: string;
-    host: Player;
-    opponent?: Player;
-    status?: boolean;
+  id: string;
+  host: SocketUserDto;
+  opponent?: SocketUserDto;
+  status?: boolean;
+}
+
+export interface AuthenticatedSocket extends Socket {
+  user: any; // Bạn có thể định nghĩa kiểu User nếu có
+  session: Session;
 }
