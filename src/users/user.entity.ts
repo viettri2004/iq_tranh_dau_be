@@ -23,6 +23,9 @@ export class User {
   @Column({ nullable: true, unique: true })
   google_id!: string;
 
+  @Column({ nullable: true, unique: true })
+  facebook_id!: string;
+
   @Column()
   name!: string;
 

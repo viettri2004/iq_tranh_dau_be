@@ -6,8 +6,11 @@ export class UserDto {
   @Expose()
   id!: number;
 
-  @Exclude()
+  @Expose()
   google_id!: string;
+
+  @Expose()
+  facebook_id!: string;
 
   @Expose()
   name!: string;
