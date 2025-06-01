@@ -42,7 +42,19 @@ export class GeminiService {
         },
       };
       const model = 'gemini-1.5-flash';
-      const contents = `Bạn là một chuyên gia giáo dục. Hãy tạo ra một bộ ${total} câu hỏi trắc nghiệm về chủ đề "${category}", dưới định dạng JSON chuẩn gồm các trường: id, question, options, correctAnswer.`;
+      const contents = `Bạn là một chuyên gia giáo dục. Hãy tạo ra một bộ ${total} câu hỏi trắc nghiệm về chủ đề "${category}" với định dạng JSON chuẩn. Mỗi câu hỏi phải có các trường sau:
+
+- "id": số nguyên duy nhất cho mỗi câu hỏi.
+- "question": nội dung câu hỏi, rõ ràng và dễ hiểu.
+- "options": một mảng chứa đúng 4 lựa chọn dạng chuỗi (ví dụ: ["Lựa chọn 1", "Lựa chọn 2", "Lựa chọn 3", "Lựa chọn 4"]), **không có đánh dấu a, b, c, d**.
+- "correctAnswer": một chuỗi, phải **giống chính xác một trong các phần tử trong "options"**, là đáp án đúng.
+
+Yêu cầu:
+- Các câu hỏi phải ngắn gọn, chính xác, phù hợp với người học phổ thông hoặc đại trà.
+- Các lựa chọn sai phải hợp lý và gây nhiễu.
+- Không chèn giải thích hoặc mô tả ngoài các trường đã nêu.
+
+Trả kết quả là một mảng JSON các đối tượng câu hỏi.`;
 
       const response = await this.ai.models.generateContent({
         model,

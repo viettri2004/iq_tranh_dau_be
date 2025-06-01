@@ -81,10 +81,11 @@ export class RoomGateway implements OnGatewayConnection, OnGatewayDisconnect {
       const authedClient = client as AuthenticatedSocket;
       authedClient.user = session.user;
       authedClient.session = session;
-      // const userId = authedClient.user.id;
+      const userId = authedClient.user.id;
 
-      // console.log(`✅ Authenticated socket user: ${userId}`);
-      // this.clientToUserId.set(client.id, { userId, roomId: '' });
+      this.clientToUserId.set(client.id, { userId, roomId: '' });
+
+      console.log(`✅ Authenticated socket user: ${userId}`);
       return { socketClientId: client.id };
     } catch (err) {
       console.log('❌ Invalid token');
