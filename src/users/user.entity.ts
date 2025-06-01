@@ -35,7 +35,7 @@ export class User {
   @Column({ nullable: true })
   password_hash!: string;
 
-  @Column({ default: 1200 })
+  @Column({ default: 0 })
   elo!: number;
 
   @Column({ default: 0 })

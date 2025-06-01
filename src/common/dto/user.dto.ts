@@ -30,6 +30,9 @@ export class UserDto {
   @Exclude()
   password_hash!: string;
 
+  @Expose()
+  elo!: number;
+
   constructor(partial: Partial<User>) {
     Object.assign(this, partial);
   }
@@ -45,12 +48,14 @@ export class UserDto {
   // 🏅 Rank Name
   @Expose()
   get rank(): string {
-    if (this.wins >= 50) return 'Master';
-    if (this.wins >= 35) return 'Diamond';
-    if (this.wins >= 20) return 'Platinum';
-    if (this.wins >= 10) return 'Gold';
-    if (this.wins >= 5) return 'Silver';
-    return 'Bronze';
+    if (this.elo >= 2500) return 'Thách đấu';
+    if (this.elo >= 2000) return 'Cao thủ';
+    if (this.elo >= 1500) return 'Kim cương';
+    if (this.elo >= 1200) return 'Bạch kim';
+    if (this.elo >= 1000) return 'Vàng';
+    if (this.elo >= 800) return 'Bạc';
+    if (this.elo >= 600) return 'Đồng';
+    return 'Tập sự'; // beginner
   }
 
   // 🧮 Rank Point %

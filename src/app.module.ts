@@ -21,8 +21,11 @@ import { Achievement } from 'src/achievements/achievement.entity';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { MatchModule } from 'src/matches/match.module';
 import { MatchAnswer } from './match-answers/match-answer.entity';
-import { MatchAnswerModule } from './match-answers/match-answer.module';
-import { SessionModule } from './sessions/session.module';
+import { MatchAnswerModule } from 'src/match-answers/match-answer.module';
+import { SessionModule } from 'src/sessions/session.module';
+import { GeminiModule } from 'src/gemini/gemini.module';
+import { CategoryModule } from 'src/categories/category.module';
+import { Category } from 'src/categories/category.entity';
 
 @Module({
   imports: [
@@ -49,6 +52,7 @@ import { SessionModule } from './sessions/session.module';
         Leaderboard,
         Achievement,
         MatchAnswer,
+        Category,
       ],
       synchronize: true, // 🔥 Tự tạo bảng theo entity (khuyên dùng dev, tắt khi production)
     }),
@@ -61,6 +65,8 @@ import { SessionModule } from './sessions/session.module';
     MatchModule,
     MatchAnswerModule,
     SessionModule,
+    GeminiModule,
+    CategoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
