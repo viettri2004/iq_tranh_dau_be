@@ -26,6 +26,7 @@ import { SessionModule } from 'src/sessions/session.module';
 import { GeminiModule } from 'src/gemini/gemini.module';
 import { CategoryModule } from 'src/categories/category.module';
 import { Category } from 'src/categories/category.entity';
+import { LeaderboardModule } from './leaderboard/leaderboard.module';
 
 @Module({
   imports: [
@@ -67,6 +68,7 @@ import { Category } from 'src/categories/category.entity';
     SessionModule,
     GeminiModule,
     CategoryModule,
+    LeaderboardModule,
   ],
   controllers: [AppController],
   providers: [AppService],
