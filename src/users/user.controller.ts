@@ -61,4 +61,37 @@ export class UserController {
   ) {
     return this.userService.updateAfterMatch(id, body);
   }
+  @Patch('me/change-password')
+  @ApiOperation({ summary: 'Đổi mật khẩu cho người dùng đang đăng nhập' })
+  @ApiBody({
+    schema: {
+      example: {
+        currentPassword: 'old_password',
+        newPassword: 'new_password123',
+      },
+    },
+  })
+  @ApiResponse({ status: 200, description: 'Đổi mật khẩu thành công' })
+  async changePassword(
+    @Req() req: RequestWithUser,
+    @Body() body: { currentPassword: string; newPassword: string },
+  ) {
+    return this.userService.changePassword(req.user.id, body.currentPassword, body.newPassword);
+  }
+  @Patch('me/change-name')
+  @ApiOperation({ summary: 'Đổi tên người dùng đang đăng nhập' })
+  @ApiBody({
+    schema: {
+      example: {
+        newName: 'new name',
+      },
+    },
+  })
+  @ApiResponse({ status: 200, description: 'Đổi tên thành công' })
+  async changeName(
+    @Req() req: RequestWithUser,
+    @Body() body: { newName: string },
+  ) {
+    return this.userService.changeName(req.user.id, body.newName);
+  }
 }
