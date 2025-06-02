@@ -85,4 +85,11 @@ export class AuthController {
       user: plainToInstance(UserDto, user, { excludeExtraneousValues: true }),
     };
   }
+  @Post('forgot-password')
+  async forgotPassword(@Body('email') email: string) {
+
+    await this.authService.requestPasswordReset(email);
+    
+    return { message: 'Email đặt lại mật khẩu đã được gửi, vui lòng kiểm tra hộp thư' };
+  }
 }

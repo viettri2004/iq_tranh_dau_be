@@ -1,5 +1,5 @@
 // src/auth/auth.service.ts
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, NotFoundException  } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { OAuth2Client } from 'google-auth-library';
 import { Repository } from 'typeorm/repository/Repository';
@@ -8,6 +8,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 import * as bcrypt from 'bcrypt';
 import { ConflictException } from '@nestjs/common';
+import * as nodemailer from 'nodemailer';
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -105,9 +107,48 @@ export class AuthService {
         name: user.name,
       },
       {
-        secret: process.env.JWT_SECRET, // ✅ cần khớp
+        secret: process.env.JWT_SECRET, 
         expiresIn: '1h',
       },
     );
+  }
+  async requestPasswordReset(email: string) {
+    const user = await this.userRepo.findOne({ where: { email } });
+    if (!user) throw new NotFoundException('Không tìm thấy người dùng');
+
+    const token = this.jwtService.sign(
+      {
+        sub: user.id,
+        type: 'reset',
+      },
+      {
+        secret: process.env.JWT_SECRET,
+        expiresIn: '15m',
+      },
+    );
+
+    const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
+
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER,      
+        pass: process.env.EMAIL_PASSWORD,  
+      },
+    });
+
+    await transporter.sendMail({
+      from: `"Quiz Game" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: 'Khôi phục mật khẩu',
+      html: `
+        <p>Chào ${user.name || 'bạn'},</p>
+        <p>Bạn đã yêu cầu đặt lại mật khẩu. Vui lòng nhấp vào liên kết dưới đây:</p>
+        <a href="${resetUrl}">Đặt lại mật khẩu</a>
+        <p>Liên kết sẽ hết hạn sau 15 phút.</p>
+      `,
+    });
+
+    return { message: 'Đã gửi email đặt lại mật khẩu' };
   }
 }
