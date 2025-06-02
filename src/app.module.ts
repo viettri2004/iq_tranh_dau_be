@@ -7,6 +7,7 @@ import { AuthModule } from 'src/auth/auth.module'; // nếu có
 
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/users/user.entity';
+import { Otp } from './otp/otp.entity'; 
 import { UserModule } from 'src/users/user.module'; // nếu có
 import { ConfigModule } from '@nestjs/config';
 import { Device } from 'src/devices/device.entity';
@@ -39,7 +40,6 @@ import { LeaderboardModule } from './leaderboard/leaderboard.module';
       host: 'localhost',
       port: 3306,
       username: 'root',
-      password: '',
       database: 'quiz_game',
       entities: [
         User,
@@ -54,6 +54,7 @@ import { LeaderboardModule } from './leaderboard/leaderboard.module';
         Achievement,
         MatchAnswer,
         Category,
+        Otp, 
       ],
       synchronize: true, // 🔥 Tự tạo bảng theo entity (khuyên dùng dev, tắt khi production)
     }),

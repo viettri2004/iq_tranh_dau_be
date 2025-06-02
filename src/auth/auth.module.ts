@@ -8,10 +8,11 @@ import { User } from 'src/users/user.entity';
 import { JwtStrategy } from 'src/common/strategies/jwt.strategy';
 import { UserModule } from 'src/users/user.module';
 import { Session } from 'src/sessions/session.entity';
-
+import { Otp } from 'src/otp/otp.entity'; 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User, Session]),
+    TypeOrmModule.forFeature([User, Otp]),
     forwardRef(() => UserModule),
     PassportModule,
     JwtModule.register({

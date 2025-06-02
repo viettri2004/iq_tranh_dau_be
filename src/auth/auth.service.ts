@@ -1,5 +1,5 @@
 // src/auth/auth.service.ts
-import { Injectable, UnauthorizedException, NotFoundException  } from '@nestjs/common';
+import { Injectable, UnauthorizedException, NotFoundException,BadRequestException  } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { OAuth2Client } from 'google-auth-library';
 import { Repository } from 'typeorm/repository/Repository';
@@ -9,12 +9,15 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 import * as bcrypt from 'bcrypt';
 import { ConflictException } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
-
+import { randomInt } from 'crypto';
+import { Otp } from 'src/otp/otp.entity';
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     @InjectRepository(User) private readonly userRepo: Repository<User>,
+    @InjectRepository(Otp) private readonly otpRepo: Repository<Otp>,
+
   ) {}
 
   async validateGoogle(
@@ -116,21 +119,28 @@ export class AuthService {
     const user = await this.userRepo.findOne({ where: { email } });
     if (!user) throw new NotFoundException('Không tìm thấy người dùng');
 
-    const token = this.jwtService.sign(
-      {
-        sub: user.id,
-        type: 'reset',
-      },
-      {
-        secret: process.env.JWT_SECRET,
-        expiresIn: '15m',
-      },
-    );
+    // Tạo OTP 6 chữ số ngẫu nhiên
+    const otpCode = randomInt(100000, 999999).toString();
 
-    const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
+    const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 phút
+
+    // Xoá các OTP cũ của user (nếu cần)
+    await this.otpRepo.delete({ user: { id: user.id } });
+
+    // Tạo và lưu OTP mới
+    const otp = this.otpRepo.create({
+      code: otpCode,
+      expires_at: expiresAt,
+      user,
+      used: false,
+    });
+    await this.otpRepo.save(otp);
 
     const transporter = nodemailer.createTransport({
       service: 'gmail',
+      host: 'smtp.gmail.com',
+      port: 587,
+      secure: false, // true for 465, false for other ports
       auth: {
         user: process.env.EMAIL_USER,      
         pass: process.env.EMAIL_PASSWORD,  
@@ -140,15 +150,46 @@ export class AuthService {
     await transporter.sendMail({
       from: `"Quiz Game" <${process.env.EMAIL_USER}>`,
       to: email,
-      subject: 'Khôi phục mật khẩu',
+      subject: 'Mã OTP đặt lại mật khẩu',
       html: `
         <p>Chào ${user.name || 'bạn'},</p>
-        <p>Bạn đã yêu cầu đặt lại mật khẩu. Vui lòng nhấp vào liên kết dưới đây:</p>
-        <a href="${resetUrl}">Đặt lại mật khẩu</a>
-        <p>Liên kết sẽ hết hạn sau 15 phút.</p>
+        <p>Bạn đã yêu cầu đặt lại mật khẩu. Mã OTP của bạn là:</p>
+        <h2>${otpCode}</h2>
+        <p>Mã này sẽ hết hạn sau 15 phút.</p>
       `,
     });
 
-    return { message: 'Đã gửi email đặt lại mật khẩu' };
+    return { message: 'Đã gửi mã OTP đến email của bạn' };
+  }
+  
+  async resetPasswordWithOtp(email: string, otpCode: string, newPassword: string) {
+    const user = await this.userRepo.findOne({ where: { email } });
+    if (!user) throw new NotFoundException('Không tìm thấy người dùng');
+
+    const otp = await this.otpRepo.findOne({
+      where: {
+        user: { id: user.id },
+        code: otpCode,
+        used: false,
+      },
+    });
+
+    if (!otp) {
+      throw new BadRequestException('Mã OTP không hợp lệ');
+    }
+
+    if (otp.expires_at < new Date()) {
+      throw new BadRequestException('Mã OTP đã hết hạn');
+    }
+
+    // Đặt lại mật khẩu
+    user.password_hash = await bcrypt.hash(newPassword, 10);
+    await this.userRepo.save(user);
+
+    // Đánh dấu OTP đã dùng
+    otp.used = true;
+    await this.otpRepo.save(otp);
+
+    return { message: 'Đặt lại mật khẩu thành công' };
   }
 }

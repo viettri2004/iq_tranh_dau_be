@@ -1,5 +1,7 @@
+import { BadRequestException  } from '@nestjs/common';
 import { Controller, Post, Body, Req } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
+
 import { InjectRepository } from '@nestjs/typeorm';
 import { plainToInstance } from 'class-transformer';
 import { AuthService } from 'src/auth/auth.service';
@@ -86,10 +88,51 @@ export class AuthController {
     };
   }
   @Post('forgot-password')
-  async forgotPassword(@Body('email') email: string) {
+  @ApiOperation({ summary: 'Gửi OTP để đặt lại mật khẩu qua email' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        email: { type: 'string', example: 'user@example.com' },
+      },
+      required: ['email'],
+    },
+  })
+  @ApiResponse({ status: 201, description: 'OTP đã được gửi tới email' })
+  @ApiResponse({ status: 400, description: 'Email là bắt buộc' })
+  async forgotPassword(
+    @Body() body: { email?: string }
+  ) {
+    const { email } = body;
+    if (!email) throw new BadRequestException('Email là bắt buộc');
 
-    await this.authService.requestPasswordReset(email);
-    
-    return { message: 'Email đặt lại mật khẩu đã được gửi, vui lòng kiểm tra hộp thư' };
+    return this.authService.requestPasswordReset(email);
   }
+
+  // Xác nhận OTP và đổi mật khẩu mới
+  @Post('reset-password')
+  @ApiOperation({ summary: 'Xác nhận OTP và đổi mật khẩu mới' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        email: { type: 'string', example: 'user@example.com' },
+        otp: { type: 'string', example: '123456' },
+        newPassword: { type: 'string', example: 'newStrongPassword123!' },
+      },
+      required: ['email', 'otp', 'newPassword'],
+    },
+  })
+  @ApiResponse({ status: 201, description: 'Đổi mật khẩu thành công' })
+  @ApiResponse({ status: 400, description: 'Thiếu thông tin hoặc OTP không hợp lệ' })
+  async resetPassword(
+    @Body() body: { email?: string; otp?: string; newPassword?: string }
+  ) {
+    const { email, otp, newPassword } = body;
+    if (!email || !otp || !newPassword)
+      throw new BadRequestException('Email, OTP và mật khẩu mới là bắt buộc');
+
+    return this.authService.resetPasswordWithOtp(email, otp, newPassword);
+  }
+  
 }
