@@ -19,6 +19,7 @@ import { Question } from 'src/questions/question.entity';
 import { Match } from 'src/matches/match.entity';
 import { Leaderboard } from 'src/leaderboard/leaderboard.entity';
 import { Achievement } from 'src/achievements/achievement.entity';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import { MatchModule } from 'src/matches/match.module';
 import { MatchAnswer } from './match-answers/match-answer.entity';
 import { MatchAnswerModule } from 'src/match-answers/match-answer.module';
@@ -30,19 +31,16 @@ import { LeaderboardModule } from './leaderboard/leaderboard.module';
 
 @Module({
   imports: [
+    EventEmitterModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true, // không cần import lại ở các module khác
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: process.env.DB_HOST,
-      port: 26599,
-      username: process.env.DB_USER,
-      password: process.env.PASSWORD_USER,
-      database: process.env.DB_NAME,
-      ssl: {
-        rejectUnauthorized: false,
-      },
+      host: 'localhost',
+      port: 3306,
+      username: 'root',
+      database: 'quiz_game',
       entities: [
         User,
         Device,
