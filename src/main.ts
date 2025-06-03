@@ -1,9 +1,9 @@
 import { JwtService } from '@nestjs/jwt';
 import { NestFactory, Reflector } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { AppModule } from './app.module';
+import { AppModule } from 'src/app.module';
 import { ValidationPipe, ClassSerializerInterceptor } from '@nestjs/common';
-import { JwtSocketAdapter } from './common/guards/wt-socket.adapter';
+import { JwtSocketAdapter } from 'src/common/guards/wt-socket.adapter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

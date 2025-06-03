@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from 'src/users/user.entity';
@@ -66,7 +70,7 @@ export class UserService {
     await this.repo.save(user);
     return { message: 'Đổi mật khẩu thành công' };
   }
-    async changeName(userId: number, newName: string) {
+  async changeName(userId: number, newName: string) {
     const user = await this.repo.findOne({ where: { id: userId } });
     if (!user) throw new NotFoundException('Người dùng không tồn tại');
 

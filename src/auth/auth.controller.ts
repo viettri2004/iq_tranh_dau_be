@@ -1,4 +1,4 @@
-import { BadRequestException  } from '@nestjs/common';
+import { BadRequestException } from '@nestjs/common';
 import { Controller, Post, Body, Req } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 
@@ -28,6 +28,7 @@ export class AuthController {
   @ApiResponse({ status: 400, description: 'ID Token không hợp lệ' })
   async loginGoogle(@Req() req: Request, @Body() dto: GoogleLoginDto) {
     const { token, user } = await this.authService.validateGoogle(dto.idToken);
+    console.log(dto.idToken);
     await this.sessionRepo.save({
       jwt_token: token,
       device_info: req.headers['user-agent'] || 'unknown',
@@ -100,9 +101,7 @@ export class AuthController {
   })
   @ApiResponse({ status: 201, description: 'OTP đã được gửi tới email' })
   @ApiResponse({ status: 400, description: 'Email là bắt buộc' })
-  async forgotPassword(
-    @Body() body: { email?: string }
-  ) {
+  async forgotPassword(@Body() body: { email?: string }) {
     const { email } = body;
     if (!email) throw new BadRequestException('Email là bắt buộc');
 
@@ -124,9 +123,12 @@ export class AuthController {
     },
   })
   @ApiResponse({ status: 201, description: 'Đổi mật khẩu thành công' })
-  @ApiResponse({ status: 400, description: 'Thiếu thông tin hoặc OTP không hợp lệ' })
+  @ApiResponse({
+    status: 400,
+    description: 'Thiếu thông tin hoặc OTP không hợp lệ',
+  })
   async resetPassword(
-    @Body() body: { email?: string; otp?: string; newPassword?: string }
+    @Body() body: { email?: string; otp?: string; newPassword?: string },
   ) {
     const { email, otp, newPassword } = body;
     if (!email || !otp || !newPassword)
@@ -134,5 +136,4 @@ export class AuthController {
 
     return this.authService.resetPasswordWithOtp(email, otp, newPassword);
   }
-  
 }
