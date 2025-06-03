@@ -26,7 +26,6 @@ const question_entity_1 = require("./questions/question.entity");
 const match_entity_1 = require("./matches/match.entity");
 const leaderboard_entity_1 = require("./leaderboard/leaderboard.entity");
 const achievement_entity_1 = require("./achievements/achievement.entity");
-const event_emitter_1 = require("@nestjs/event-emitter");
 const match_module_1 = require("./matches/match.module");
 const match_answer_entity_1 = require("./match-answers/match-answer.entity");
 const match_answer_module_1 = require("./match-answers/match-answer.module");
@@ -41,16 +40,19 @@ exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            event_emitter_1.EventEmitterModule.forRoot(),
             config_1.ConfigModule.forRoot({
                 isGlobal: true,
             }),
             typeorm_1.TypeOrmModule.forRoot({
                 type: 'mysql',
-                host: 'localhost',
-                port: 3306,
-                username: 'root',
-                database: 'quiz_game',
+                host: process.env.DB_HOST,
+                port: 26599,
+                username: process.env.DB_USER,
+                password: process.env.PASSWORD_USER,
+                database: process.env.DB_NAME,
+                ssl: {
+                    rejectUnauthorized: false,
+                },
                 entities: [
                     user_entity_1.User,
                     device_entity_1.Device,

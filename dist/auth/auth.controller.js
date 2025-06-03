@@ -34,6 +34,7 @@ let AuthController = class AuthController {
     }
     async loginGoogle(req, dto) {
         const { token, user } = await this.authService.validateGoogle(dto.idToken);
+        console.log(dto.idToken);
         await this.sessionRepo.save({
             jwt_token: token,
             device_info: req.headers['user-agent'] || 'unknown',
@@ -155,7 +156,10 @@ __decorate([
         },
     }),
     (0, swagger_1.ApiResponse)({ status: 201, description: 'Đổi mật khẩu thành công' }),
-    (0, swagger_1.ApiResponse)({ status: 400, description: 'Thiếu thông tin hoặc OTP không hợp lệ' }),
+    (0, swagger_1.ApiResponse)({
+        status: 400,
+        description: 'Thiếu thông tin hoặc OTP không hợp lệ',
+    }),
     __param(0, (0, common_2.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
