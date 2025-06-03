@@ -1,7 +1,7 @@
 // src/modules/leaderboard/leaderboard.service.ts
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { MoreThan, Repository } from 'typeorm';
 import { Leaderboard } from 'src/leaderboard/leaderboard.entity';
 import { User } from 'src/users/user.entity';
 
@@ -41,5 +41,24 @@ export class LeaderboardService {
       take: limit,
     });
     return [users, total];
+  }
+
+  async getUserRankWithInfo(
+    userId: number,
+  ): Promise<{ user: User; rank_index: number }> {
+    const user = await this.userRepo.findOne({ where: { id: userId } });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const betterUsersCount = await this.userRepo.count({
+      where: { elo: MoreThan(user.elo) },
+    });
+
+    return {
+      user,
+      rank_index: betterUsersCount + 1,
+    };
   }
 }
