@@ -36,11 +36,16 @@ import { LeaderboardModule } from './leaderboard/leaderboard.module';
       isGlobal: true, // không cần import lại ở các module khác
     }),
     TypeOrmModule.forRoot({
+      
       type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      database: 'quiz_game',
+      host: process.env.DB_HOST,
+      port: process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : 3306,
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
+      ssl: {
+        rejectUnauthorized: false, 
+      },
       entities: [
         User,
         Device,
