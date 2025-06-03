@@ -118,7 +118,7 @@ export class AuthService {
   async requestPasswordReset(email: string) {
     const user = await this.userRepo.findOne({ where: { email } });
     if (!user) throw new NotFoundException('Không tìm thấy người dùng');
-
+    if (!user.password_hash) throw new BadRequestException('Người dùng không dùng mật khẩu');
     // Tạo OTP 6 chữ số ngẫu nhiên
     const otpCode = randomInt(100000, 999999).toString();
 
