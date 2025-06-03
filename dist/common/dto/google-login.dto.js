@@ -18,10 +18,8 @@ class GoogleLoginDto {
 exports.GoogleLoginDto = GoogleLoginDto;
 __decorate([
     (0, swagger_1.ApiProperty)({
-        description: 'ID Token từ Google sau khi người dùng đăng nhập',
-        example: 'eyJhbGciOiJSUzI1NiIsImtpZCI6IjE2ZTg3NjM1OTg3ZTQ3YjM5NjYzMjU5NmM4NzNkYTAzMmUyNmMyNmMiLCJ0eXAiOiJKV1QifQ...',
+        description: 'Google ID Token trả về sau khi người dùng đăng nhập bằng Google',
     }),
-    (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], GoogleLoginDto.prototype, "idToken", void 0);

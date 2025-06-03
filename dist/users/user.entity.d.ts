@@ -1,13 +1,33 @@
-export declare class UserEntity {
+import { Device } from 'src/devices/device.entity';
+import { Match } from 'src/matches/match.entity';
+import { Room } from 'src/rooms/room.entity';
+import { Achievement } from 'src/achievements/achievement.entity';
+import { Report } from 'src/reports/report.entity';
+import { Session } from 'src/sessions/session.entity';
+import { GameEvent } from 'src/game_events/game-event.entity';
+import { Leaderboard } from 'src/leaderboard/leaderboard.entity';
+export declare class User {
     id: number;
-    googleId: string;
+    google_id: string;
+    facebook_id: string;
     name: string;
     email: string;
-    avatarUrl: string;
+    avatar_url: string;
+    password_hash: string;
     elo: number;
     exp: number;
-    totalMatches: number;
+    total_matches: number;
     wins: number;
     losses: number;
-    createdAt: Date;
+    created_at: Date;
+    devices: Device[];
+    matchesAsPlayer1: Match[];
+    matchesAsPlayer2: Match[];
+    hostedRooms: Room[];
+    joinedRooms: Room[];
+    achievements: Achievement[];
+    reports: Report[];
+    sessions: Session[];
+    gameEvents: GameEvent[];
+    leaderboardEntries: Leaderboard[];
 }
