@@ -44,7 +44,8 @@ async function bootstrap() {
     }),
   );
 
-  app.listen(3000, '0.0.0.0');
-  console.log(`Swagger UI`);
+  const port = process.env.PORT || 3000;
+  await app.listen(port, '0.0.0.0');
+  console.log(`Server is running on http://localhost:${port}`);
 }
 bootstrap();
