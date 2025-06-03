@@ -6,7 +6,6 @@ import { UserController } from './user.controller';
 import { AuthModule } from 'src/auth/auth.module';
 import { Session } from 'src/sessions/session.entity';
 import { SessionModule } from 'src/sessions/session.module';
-
 @Module({
   imports: [
     TypeOrmModule.forFeature([User, Session]),

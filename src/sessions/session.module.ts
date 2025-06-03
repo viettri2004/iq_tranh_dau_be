@@ -1,7 +1,7 @@
 // src/sessions/session.module.ts
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Session } from './session.entity';
+import { Session } from 'src/sessions/session.entity';
 import { User } from 'src/users/user.entity';
 
 @Module({

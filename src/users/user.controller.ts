@@ -18,11 +18,9 @@ import { UserService } from 'src/users/user.service';
 
 import { UserPayload } from 'src/common/interfaces/user-payload.interface';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
-
 interface RequestWithUser extends Request {
   user: UserPayload;
 }
-
 @ApiTags('users')
 @ApiBearerAuth('jwt-auth')
 @UseGuards(JwtAuthGuard)
@@ -76,7 +74,11 @@ export class UserController {
     @Req() req: RequestWithUser,
     @Body() body: { currentPassword: string; newPassword: string },
   ) {
-    return this.userService.changePassword(req.user.id, body.currentPassword, body.newPassword);
+    return this.userService.changePassword(
+      req.user.id,
+      body.currentPassword,
+      body.newPassword,
+    );
   }
   @Patch('me/change-name')
   @ApiOperation({ summary: 'Đổi tên người dùng đang đăng nhập' })

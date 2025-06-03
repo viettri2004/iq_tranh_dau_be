@@ -1,20 +1,18 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { RoomGateway } from 'src/gateways/room.gateway';
 import { MatchModule } from 'src/matches/match.module';
-import { UserModule } from 'src/users/user.module';
+
 import { RoomGateController } from './room.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Session } from 'src/sessions/session.entity';
+import { UserService } from 'src/users/user.service';
+import { User } from 'src/users/user.entity';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Session]),
-    UserModule,
-    forwardRef(() => MatchModule),
-  ],
+  imports: [TypeOrmModule.forFeature([User]), forwardRef(() => MatchModule)],
 
   providers: [
     RoomGateway,
+    UserService,
     {
       provide: 'MATCH_PROGRESS_MAP',
       useValue: new Map<string, { currentQuestion: number }>(),

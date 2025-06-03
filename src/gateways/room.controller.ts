@@ -8,18 +8,10 @@ import {
 } from '@nestjs/common';
 import { RoomGateway } from 'src/gateways/room.gateway';
 import { CreateRoomDto, JoinRoomDto } from 'src/common/types/room.interface';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiBody,
-  ApiExtraModels,
-} from '@nestjs/swagger';
-import { StartMatchDto } from 'src/common/dto/question.dto';
-import { questions } from 'src/common/mockup/questions';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 
 @ApiTags('socket-room (docs)')
-@ApiExtraModels(CreateRoomDto, JoinRoomDto)
+// @ApiExtraModels(CreateRoomDto, JoinRoomDto)
 @Controller('rooms')
 export class RoomGateController {
   constructor(private readonly roomGateway: RoomGateway) {}
@@ -165,32 +157,32 @@ export class RoomGateController {
     );
   }
 
-  @Post(':roomId/start')
-  @ApiOperation({
-    summary: '📡 [Socket] Bắt đầu trận đấu (mô phỏng)',
-    description:
-      'Chỉ được gọi khi đã có 2 người chơi trong phòng. Tạo trận đấu mới và bắt đầu.',
-  })
-  @ApiBody({
-    type: StartMatchDto,
-  })
-  @ApiResponse({
-    status: 200,
-    description:
-      'Bắt đầu trận đấu thành công, trả về matchId và thông tin người chơi',
-  })
-  startMatch(@Param('roomId') roomId: string) {
-    return this.roomGateway.handleStartMatch(
-      {
-        roomId,
-        questions: questions,
-      },
-      {
-        id: 'test-client-id',
-        emit: () => {},
-        join: () => {},
-        leave: () => {},
-      } as any,
-    );
-  }
+  // @Post(':roomId/start')
+  // @ApiOperation({
+  //   summary: '📡 [Socket] Bắt đầu trận đấu (mô phỏng)',
+  //   description:
+  //     'Chỉ được gọi khi đã có 2 người chơi trong phòng. Tạo trận đấu mới và bắt đầu.',
+  // })
+  // @ApiBody({
+  //   type: StartMatchDto,
+  // })
+  // @ApiResponse({
+  //   status: 200,
+  //   description:
+  //     'Bắt đầu trận đấu thành công, trả về matchId và thông tin người chơi',
+  // })
+  // startMatch(@Param('roomId') roomId: string) {
+  //   return this.roomGateway.handleStartMatch(
+  //     {
+  //       roomId,
+  //       questions: questions,
+  //     },
+  //     {
+  //       id: 'test-client-id',
+  //       emit: () => {},
+  //       join: () => {},
+  //       leave: () => {},
+  //     } as any,
+  //   );
+  // }
 }

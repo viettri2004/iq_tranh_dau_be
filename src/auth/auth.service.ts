@@ -1,5 +1,10 @@
 // src/auth/auth.service.ts
-import { Injectable, UnauthorizedException, NotFoundException,BadRequestException  } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { OAuth2Client } from 'google-auth-library';
 import { Repository } from 'typeorm/repository/Repository';
@@ -17,7 +22,6 @@ export class AuthService {
     private readonly jwtService: JwtService,
     @InjectRepository(User) private readonly userRepo: Repository<User>,
     @InjectRepository(Otp) private readonly otpRepo: Repository<Otp>,
-
   ) {}
 
   async validateGoogle(
@@ -110,7 +114,7 @@ export class AuthService {
         name: user.name,
       },
       {
-        secret: process.env.JWT_SECRET, 
+        secret: process.env.JWT_SECRET,
         expiresIn: '1h',
       },
     );
@@ -118,7 +122,8 @@ export class AuthService {
   async requestPasswordReset(email: string) {
     const user = await this.userRepo.findOne({ where: { email } });
     if (!user) throw new NotFoundException('Không tìm thấy người dùng');
-    if (!user.password_hash) throw new BadRequestException('Người dùng không dùng mật khẩu');
+    if (!user.password_hash)
+      throw new BadRequestException('Người dùng không dùng mật khẩu');
     // Tạo OTP 6 chữ số ngẫu nhiên
     const otpCode = randomInt(100000, 999999).toString();
 
@@ -142,8 +147,8 @@ export class AuthService {
       port: 587,
       secure: false, // true for 465, false for other ports
       auth: {
-        user: process.env.EMAIL_USER,      
-        pass: process.env.EMAIL_PASSWORD,  
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASSWORD,
       },
     });
 
@@ -161,8 +166,12 @@ export class AuthService {
 
     return { message: 'Đã gửi mã OTP đến email của bạn' };
   }
-  
-  async resetPasswordWithOtp(email: string, otpCode: string, newPassword: string) {
+
+  async resetPasswordWithOtp(
+    email: string,
+    otpCode: string,
+    newPassword: string,
+  ) {
     const user = await this.userRepo.findOne({ where: { email } });
     if (!user) throw new NotFoundException('Không tìm thấy người dùng');
 
